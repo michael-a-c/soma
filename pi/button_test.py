@@ -15,6 +15,7 @@ class SelectorBtn:
     def __init__(self, pin):
         self.pin = pin
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
     def get_state(self):
         logging.debug(f"Selector State: {GPIO.input(self.pin)}")
         return GPIO.input(self.pin)
@@ -41,7 +42,7 @@ def signal_handler(sig, frame):
 
 if __name__ == "__main__":
     GPIO.setmode(GPIO.BCM)
-    sel = Btn(SEL_PIN)
+    sel = SelectorBtn(SEL_PIN)
     fn1 = Btn(FN1_PIN, "Func1", sel)
     fn2 = Btn(FN2_PIN, "Func2", sel)
     fn3 = Btn(FN3_PIN, "Func3", sel)
