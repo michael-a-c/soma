@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 import signal
 import sys
 import logging
+import threading
 
 logging.basicConfig(level = logging.DEBUG)
 disp = LCD_1inch69.LCD_1inch69()
@@ -26,6 +27,7 @@ SEL_PIN = 19
 class SelectorBtn:
     def __init__(self, pin):
         self.pin = pin
+        self.xy
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     def get_state(self):
@@ -33,19 +35,30 @@ class SelectorBtn:
         return GPIO.input(self.pin)
 
 class Btn: 
-    def __init__(self, pin, name, selector):
+    def __init__(self, pin, name, alt_name, selector, dm, xy):
         self.name = name  
+        self.alt_name = alt_name
         self.pin = pin
+        self.displayManager = dm
+        self.xy = xy
         self.selector=selector
-        logging.info(f"Created button with pin={self.pin} name={self.name}")
+        logging.debug(f"Created button with pin={self.pin} name={self.name}")
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.onchange, bouncetime=7)
+        GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.onchange, bouncetime=50)
 
     def onchange(self, pin):
-        if GPIO.input(pin) == GPIO.LOW:
-            logging.info(f"Button {self.name}, pin={pin} OFF. SELECT={self.selector.get_state()}")
+        name = ""
+        if(self.selector.get_state()):
+            name = self.alt_name
         else:
-            logging.info(f"Button {self.name}, pin={pin} ON. SELECT={self.selector.get_state()}")
+            name = self.name
+
+        if GPIO.input(pin) == GPIO.LOW:
+            self.displayManager.add_text(self.xy, f"{name} \n OFF")
+            logging.debug(f"Button {name}, pin={pin} OFF. SELECT={self.selector.get_state()}")
+        else:
+            self.displayManager.add_text(self.xy, f"{name} \n ON")
+            logging.debug(f"Button {name}, pin={pin} ON. SELECT={self.selector.get_state()}")
 
 def signal_handler(sig, frame):
     disp.module_exit()
@@ -53,35 +66,41 @@ def signal_handler(sig, frame):
     GPIO.cleanup()
     sys.exit(0)
 
+
+class DisplayManager():
+    def __init__(self):
+        # Initialize library.
+        disp.Init()
+        # Clear display.
+        disp.clear()
+        #Set the backlight to 100
+        disp.bl_DutyCycle(50)
+        self.font = ImageFont.truetype("Font02.ttf", 12)
+        self.text_contents = []
+        logging.info("Started Display Manager, redrawing 0.5s")
+        threading.Timer(0.5, self.draw).start()
+
+    def add_text(self, xy, text):
+        self.text_contents[xy] = text
+
+    def draw(self):
+        image = Image.new("RGB", (disp.width,disp.height ), "WHITE")
+        draw = ImageDraw.Draw(image)
+            
+        for xy in self.text_contents.keys():
+            x,y = xy
+            draw.text((x, y), self.text_contents[xy], fill = "RED", font=self.font)
+        disp.ShowImage(image)
+        
 if __name__ == "__main__":
     GPIO.setmode(GPIO.BCM)
+    dm = DisplayManager()
     sel = SelectorBtn(SEL_PIN)
-    fn1 = Btn(FN1_PIN, "Func1", sel)
-    fn2 = Btn(FN2_PIN, "Func2", sel)
-    fn3 = Btn(FN3_PIN, "Func3", sel)
-    fn4 = Btn(FN4_PIN, "Func4", sel)
-    fn5 = Btn(FN5_PIN, "Func5", sel)
-
-    # Initialize library.
-    disp.Init()
-    # Clear display.
-    disp.clear()
-    #Set the backlight to 100
-    disp.bl_DutyCycle(50)
-    Font1 = ImageFont.truetype("Font01.ttf", 35)
-
-    logging.info("draw text")
-    image1 = Image.new("RGB", (disp.width,disp.height ), "WHITE")
-    draw = ImageDraw.Draw(image1)
-
-    draw.rectangle([(20, 120), (160, 153)], fill = "BLUE")
-    draw.text((25, 120), 'Hello world', fill = "RED", font=Font1)
-    draw.text((0, 0), 'Hello world', fill = "RED", font=Font1)
-    draw.text((3, 3), 'Hello world', fill = "RED", font=Font1)
-    draw.text((15, 15), 'Hello world', fill = "RED", font=Font1)
-    draw.text((25, 25), 'Hello world', fill = "RED", font=Font1)
-
-    disp.ShowImage(image1)
+    fn1 = Btn(FN1_PIN, "FN1", "FN6",  sel, dm, (10, 10))
+    fn2 = Btn(FN2_PIN, "FN2", "FN7",  sel, dm, (25, 10))
+    fn3 = Btn(FN3_PIN, "FN3", "FN8",  sel, dm, (45, 10))
+    fn4 = Btn(FN4_PIN, "FN4", "FN9",  sel, dm, (10, 35))
+    fn5 = Btn(FN5_PIN, "FN5", "FN10", sel, dm, (30, 35))
 
     logging.info("Press CTRL-C to exit.")
     signal.signal(signal.SIGINT, signal_handler)
