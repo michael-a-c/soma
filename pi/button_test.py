@@ -76,19 +76,21 @@ class DisplayManager():
         disp.bl_DutyCycle(50)
         self.font = ImageFont.truetype("Font02.ttf", 12)
         self.text_contents = {}
-        logging.info("Started Display Manager, redrawing 0.5s")
+        logging.debug("Started Display Manager, redrawing 0.5s")
         threading.Timer(0.5, self.draw).start()
 
     def add_text(self, xy, text):
+        logging.debug("Adding text")
         self.text_contents[xy] = text
 
     def draw(self):
+        logging.debug(f"Drawing screen with ${len(self.text_contents.keys())}")
         image = Image.new("RGB", (disp.width,disp.height ), "WHITE")
         draw = ImageDraw.Draw(image)
             
         for xy in self.text_contents.keys():
             x,y = xy
-            draw.text((x, y), self.text_contents[xy], fill = "RED", font=self.font)
+            draw.text((x, y), self.text_contents[xy], fill = "BLACK", font=self.font)
         disp.ShowImage(image)
         
 if __name__ == "__main__":
