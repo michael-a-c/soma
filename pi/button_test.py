@@ -30,6 +30,7 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 if __name__ == "__main__":
+    GPIO.setmode(GPIO.BCM)
     btn(FN1_PIN, "Func1")
     btn(FN2_PIN, "Func2")
     btn(FN3_PIN, "Func3")
@@ -37,7 +38,6 @@ if __name__ == "__main__":
     btn(FN5_PIN, "Func5")
     btn(SEL_PIN, "Selector")
 
-    GPIO.setmode(GPIO.BCM)
     signal.signal(signal.SIGINT, signal_handler)
     logging.info("Press CTRL-C to exit.")
     signal.pause()
