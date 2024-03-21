@@ -49,7 +49,6 @@ class Btn:
 
 def signal_handler(sig, frame):
     disp.module_exit()
-    GPIO.setmode(GPIO.BCM)
     logging.critical('Exiting, cleaning up pins')
     GPIO.cleanup()
     sys.exit(0)
@@ -69,7 +68,7 @@ if __name__ == "__main__":
     disp.clear()
     #Set the backlight to 100
     disp.bl_DutyCycle(50)
-    Font1 = ImageFont.truetype("./Font01.ttf", 35)
+    Font1 = ImageFont.truetype("Font01.ttf", 35)
 
     logging.info("draw text")
     image1 = Image.new("RGB", (disp.width,disp.height ), "WHITE")
@@ -77,6 +76,12 @@ if __name__ == "__main__":
 
     draw.rectangle([(20, 120), (160, 153)], fill = "BLUE")
     draw.text((25, 120), 'Hello world', fill = "RED", font=Font1)
+    draw.text((0, 0), 'Hello world', fill = "RED", font=Font1)
+    draw.text((3, 3), 'Hello world', fill = "RED", font=Font1)
+    draw.text((15, 15), 'Hello world', fill = "RED", font=Font1)
+    draw.text((25, 25), 'Hello world', fill = "RED", font=Font1)
+
+    disp.ShowImage(image1)
 
     logging.info("Press CTRL-C to exit.")
     signal.signal(signal.SIGINT, signal_handler)
