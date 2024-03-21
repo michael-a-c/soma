@@ -7,7 +7,7 @@ import sys
 import logging
 
 logging.basicConfig(level = logging.DEBUG)
-
+disp = LCD_1inch69.LCD_1inch69()
 
 # Raspberry Pi pin configuration:
 RST = 27
@@ -48,6 +48,7 @@ class Btn:
             logging.info(f"Button {self.name}, pin={pin} ON. SELECT={self.selector.get_state()}")
 
 def signal_handler(sig, frame):
+    disp.module_exit()
     GPIO.setmode(GPIO.BCM)
     logging.critical('Exiting, cleaning up pins')
     GPIO.cleanup()
@@ -62,7 +63,6 @@ if __name__ == "__main__":
     fn4 = Btn(FN4_PIN, "Func4", sel)
     fn5 = Btn(FN5_PIN, "Func5", sel)
 
-    disp = LCD_1inch69.LCD_1inch69()
     # Initialize library.
     disp.Init()
     # Clear display.
@@ -77,7 +77,6 @@ if __name__ == "__main__":
 
     draw.rectangle([(20, 120), (160, 153)], fill = "BLUE")
     draw.text((25, 120), 'Hello world', fill = "RED", font=Font1)
-    disp.module_exit()
 
     logging.info("Press CTRL-C to exit.")
     signal.signal(signal.SIGINT, signal_handler)
