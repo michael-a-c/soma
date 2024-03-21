@@ -8,6 +8,14 @@ import logging
 
 logging.basicConfig(level = logging.DEBUG)
 
+
+# Raspberry Pi pin configuration:
+RST = 27
+DC = 25
+BL = 18
+bus = 0
+device = 0
+
 FN1_PIN = 12
 FN2_PIN = 16
 FN3_PIN = 20
