@@ -87,10 +87,10 @@ class DisplayManager():
         logging.debug(f"Drawing screen with ${len(self.text_contents.keys())}")
         image = Image.new("RGB", (disp.width,disp.height ), "WHITE")
         draw = ImageDraw.Draw(image)
-            
-        for xy in self.text_contents.keys():
+        text = self.text_contents.copy()
+        for xy in text.keys():
             x,y = xy
-            draw.text((x, y), self.text_contents[xy], fill = "BLACK", font=self.font)
+            draw.text((x, y), text[xy], fill = "BLACK", font=self.font)
         disp.ShowImage(image)
         threading.Timer(0.5, self.draw).start()
 
