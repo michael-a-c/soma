@@ -11,9 +11,10 @@ FN5_PIN = 26
 SEL_PIN = 19
 
 class btn: 
-    def __init__(self, name, pin):
+    def __init__(self, pin, name):
         self.name = name
-        self.PIN = pin
+        self.pin = pin
+        logging.debug(f"Created button with pin={self.pin} name={self.name}")
         GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.PIN, GPIO.BOTH, callback=self.onchange, bouncetime=10)
 
