@@ -48,6 +48,7 @@ class Btn:
             logging.info(f"Button {self.name}, pin={pin} ON. SELECT={self.selector.get_state()}")
 
 def signal_handler(sig, frame):
+    GPIO.setmode(GPIO.BCM)
     logging.critical('Exiting, cleaning up pins')
     GPIO.cleanup()
     sys.exit(0)
@@ -60,7 +61,6 @@ if __name__ == "__main__":
     fn3 = Btn(FN3_PIN, "Func3", sel)
     fn4 = Btn(FN4_PIN, "Func4", sel)
     fn5 = Btn(FN5_PIN, "Func5", sel)
-
 
     disp = LCD_1inch69.LCD_1inch69()
     # Initialize library.
