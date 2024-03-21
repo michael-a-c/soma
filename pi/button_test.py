@@ -77,6 +77,7 @@ class DisplayManager():
         self.font = ImageFont.truetype("Font02.ttf", 12)
         self.text_contents = {}
         logging.debug("Started Display Manager, redrawing 0.5s")
+        self.draw()
 
     def add_text(self, xy, text):
         logging.debug("Adding text")
@@ -91,11 +92,12 @@ class DisplayManager():
             x,y = xy
             draw.text((x, y), self.text_contents[xy], fill = "BLACK", font=self.font)
         disp.ShowImage(image)
+        threading.Timer(0.5, self.draw).start()
+
         
 if __name__ == "__main__":
     GPIO.setmode(GPIO.BCM)
     dm = DisplayManager()
-    threading.Timer(0.5, dm.draw).start()
 
     sel = SelectorBtn(SEL_PIN)
     fn1 = Btn(FN1_PIN, "FN1", "FN6",  sel, dm, (10, 10))
