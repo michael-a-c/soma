@@ -1,7 +1,11 @@
 import RPi.GPIO as GPIO
+import spidev as SPI
+from lib import LCD_1inch69
+from PIL import Image, ImageDraw, ImageFont
 import signal
 import sys
 import logging
+
 logging.basicConfig(level = logging.DEBUG)
 
 FN1_PIN = 12
@@ -48,6 +52,24 @@ if __name__ == "__main__":
     fn3 = Btn(FN3_PIN, "Func3", sel)
     fn4 = Btn(FN4_PIN, "Func4", sel)
     fn5 = Btn(FN5_PIN, "Func5", sel)
+
+
+    disp = LCD_1inch69.LCD_1inch69()
+    # Initialize library.
+    disp.Init()
+    # Clear display.
+    disp.clear()
+    #Set the backlight to 100
+    disp.bl_DutyCycle(50)
+    Font1 = ImageFont.truetype("./Font01.ttf", 35)
+
+    logging.info("draw text")
+    image1 = Image.new("RGB", (disp.width,disp.height ), "WHITE")
+    draw = ImageDraw.Draw(image1)
+
+    draw.rectangle([(20, 120), (160, 153)], fill = "BLUE")
+    draw.text((25, 120), 'Hello world', fill = "RED", font=Font1)
+    disp.module_exit()
 
     signal.signal(signal.SIGINT, signal_handler)
     logging.info("Press CTRL-C to exit.")
