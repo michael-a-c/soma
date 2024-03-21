@@ -15,8 +15,8 @@ class btn:
         self.name = name
         self.pin = pin
         logging.debug(f"Created button with pin={self.pin} name={self.name}")
-        GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.PIN, GPIO.BOTH, callback=self.onchange, bouncetime=10)
+        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.onchange, bouncetime=10)
 
     def onchange(self, pin):
         if GPIO.input(pin) == GPIO.LOW:
