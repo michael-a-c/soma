@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import signal
 import sys
 import logging
+logging.basicConfig(level = logging.DEBUG)
 
 FN1_PIN = 12
 FN2_PIN = 16
