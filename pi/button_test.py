@@ -50,7 +50,6 @@ class Btn:
 def signal_handler(sig, frame):
     logging.critical('Exiting, cleaning up pins')
     GPIO.cleanup()
-    disp.module_exit()
     sys.exit(0)
 
 if __name__ == "__main__":
@@ -80,6 +79,6 @@ if __name__ == "__main__":
     draw.text((25, 120), 'Hello world', fill = "RED", font=Font1)
     disp.module_exit()
 
-    signal.signal(signal.SIGINT, signal_handler)
     logging.info("Press CTRL-C to exit.")
+    signal.signal(signal.SIGINT, signal_handler)
     signal.pause()
