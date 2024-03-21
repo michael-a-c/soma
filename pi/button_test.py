@@ -74,9 +74,9 @@ class DisplayManager():
         disp.clear()
         #Set the backlight to 100
         disp.bl_DutyCycle(50)
-        self.font = ImageFont.truetype("Font02.ttf", 12)
+        self.font = ImageFont.truetype("Font02.ttf", 24)
         self.text_contents = {}
-        logging.debug("Started Display Manager, redrawing 0.5s")
+        logging.debug("Started Display Manager, redrawing every 0.5s")
         self.draw()
 
     def add_text(self, xy, text):
@@ -84,7 +84,7 @@ class DisplayManager():
         self.text_contents[xy] = text
 
     def draw(self):
-        logging.debug(f"Drawing screen with ${len(self.text_contents.keys())}")
+        #logging.debug(f"Drawing screen with ${len(self.text_contents.keys())}")
         image = Image.new("RGB", (disp.width,disp.height ), "WHITE")
         draw = ImageDraw.Draw(image)
         text = self.text_contents.copy()
@@ -92,7 +92,7 @@ class DisplayManager():
             x,y = xy
             draw.text((x, y), text[xy], fill = "BLACK", font=self.font)
         disp.ShowImage(image)
-        threading.Timer(0.5, self.draw).start()
+        threading.Timer(0.3, self.draw).start()
 
         
 if __name__ == "__main__":
@@ -101,10 +101,10 @@ if __name__ == "__main__":
 
     sel = SelectorBtn(SEL_PIN)
     fn1 = Btn(FN1_PIN, "FN1", "FN6",  sel, dm, (10, 10))
-    fn2 = Btn(FN2_PIN, "FN2", "FN7",  sel, dm, (25, 10))
-    fn3 = Btn(FN3_PIN, "FN3", "FN8",  sel, dm, (45, 10))
-    fn4 = Btn(FN4_PIN, "FN4", "FN9",  sel, dm, (10, 35))
-    fn5 = Btn(FN5_PIN, "FN5", "FN10", sel, dm, (30, 35))
+    fn2 = Btn(FN2_PIN, "FN2", "FN7",  sel, dm, (45, 10))
+    fn3 = Btn(FN3_PIN, "FN3", "FN8",  sel, dm, (65, 10))
+    fn4 = Btn(FN4_PIN, "FN4", "FN9",  sel, dm, (10, 65))
+    fn5 = Btn(FN5_PIN, "FN5", "FN10", sel, dm, (65, 65))
 
     logging.info("Press CTRL-C to exit.")
     signal.signal(signal.SIGINT, signal_handler)
