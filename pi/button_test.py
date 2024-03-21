@@ -27,7 +27,6 @@ SEL_PIN = 19
 class SelectorBtn:
     def __init__(self, pin):
         self.pin = pin
-        self.xy
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     def get_state(self):
@@ -76,7 +75,7 @@ class DisplayManager():
         #Set the backlight to 100
         disp.bl_DutyCycle(50)
         self.font = ImageFont.truetype("Font02.ttf", 12)
-        self.text_contents = []
+        self.text_contents = {}
         logging.info("Started Display Manager, redrawing 0.5s")
         threading.Timer(0.5, self.draw).start()
 
