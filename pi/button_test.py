@@ -1,32 +1,42 @@
 import RPi.GPIO as GPIO
-import Relay
 import signal
 import sys
+import logging
 
-BUTTON = 14
-RED_LED = 15
+FN1_PIN = 12
+FN2_PIN = 16
+FN3_PIN = 20
+FN4_PIN = 21
+FN5_PIN = 26
+SEL_PIN = 19
+
+class btn: 
+    def __init__(self, name, pin):
+        self.name = name
+        self.PIN = pin
+        GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(self.PIN, GPIO.BOTH, callback=self.onchange, bouncetime=10)
+
+    def onchange(self, pin):
+        if GPIO.input(pin) == GPIO.LOW:
+            logging.info(f"Button {self.name}, pin={pin} OFF.")
+        else:
+            logging.info(f"Button {self.name}, pin={pin} ON.")
 
 def signal_handler(sig, frame):
-    print('You pressed Ctrl+C!')
+    logging.critical('Exiting, cleaning up pins')
     GPIO.cleanup()
     sys.exit(0)
 
-def button_changed(button):
-    if GPIO.input(button) == GPIO.LOW:
-        print("Button pressed.")
-        Relay.relay_on()
-        GPIO.output(RED_LED, GPIO.HIGH)
-    else:
-        Relay.relay_off()
-        print("Button released.")
-        GPIO.output(RED_LED, GPIO.LOW)
+if __name__ == "__main__":
+    btn(FN1_PIN, "Func1")
+    btn(FN2_PIN, "Func2")
+    btn(FN3_PIN, "Func3")
+    btn(FN4_PIN, "Func4")
+    btn(FN5_PIN, "Func5")
+    btn(SEL_PIN, "Selector")
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(RED_LED, GPIO.OUT)
-GPIO.output(RED_LED, GPIO.LOW)
-GPIO.add_event_detect(BUTTON, GPIO.BOTH, callback=button_changed, bouncetime=10)
-
-signal.signal(signal.SIGINT, signal_handler)
-print("Press CTRL-C to exit.")
-signal.pause()
+    GPIO.setmode(GPIO.BCM)
+    signal.signal(signal.SIGINT, signal_handler)
+    logging.info("Press CTRL-C to exit.")
+    signal.pause()
