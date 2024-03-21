@@ -42,6 +42,7 @@ class Btn:
 def signal_handler(sig, frame):
     logging.critical('Exiting, cleaning up pins')
     GPIO.cleanup()
+    disp.module_exit()
     sys.exit(0)
 
 if __name__ == "__main__":
